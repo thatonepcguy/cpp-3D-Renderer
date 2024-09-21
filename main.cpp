@@ -142,7 +142,7 @@ int main() {
     renderer = SDL_CreateRenderer(window, -1, SDL_FLAGS);
 
     // Create Object
-    std::string path = "Suzanne.obj";
+    std::string path = "lander_A.obj";
     Object3D object = parse(path);
 
     // Camera
