@@ -142,7 +142,7 @@ int main() {
     renderer = SDL_CreateRenderer(window, -1, SDL_FLAGS);
 
     // Create Object
-    std::string path = "lander_A.obj";
+    std::string path = "Suzanne.obj";
     Object3D object = parse(path);
 
     // Camera
@@ -220,17 +220,17 @@ int main() {
         }
         // input
         if (keyPressed == "w") {
-            cameraPos.x += 1*sin(cameraRot.y);
-            cameraPos.z -= 1*cos(cameraRot.y);
+            cameraPos.x += 0.1*sin(cameraRot.y);
+            cameraPos.z -= 0.1*cos(cameraRot.y);
         } else if (keyPressed == "s") {
-            cameraPos.x -= 1*sin(cameraRot.y);
-            cameraPos.z += 1*cos(cameraRot.y);
+            cameraPos.x -= 0.1*sin(cameraRot.y);
+            cameraPos.z += 0.1*cos(cameraRot.y);
         } else if (keyPressed == "d") {
-            cameraPos.x -= 1*cos(cameraRot.y);
-            cameraPos.z -= 1*sin(cameraRot.y);
+            cameraPos.x -= 0.1*cos(cameraRot.y);
+            cameraPos.z -= 0.1*sin(cameraRot.y);
         } else if (keyPressed == "a") {
-            cameraPos.x += 1*cos(cameraRot.y);
-            cameraPos.z += 1*sin(cameraRot.y);
+            cameraPos.x += 0.1*cos(cameraRot.y);
+            cameraPos.z += 0.1*sin(cameraRot.y);
         } else if (keyPressed == "sp") {
             cameraPos.y += 1;
         } else if (keyPressed == "sh") {
