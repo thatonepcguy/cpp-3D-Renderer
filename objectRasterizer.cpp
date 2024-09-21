@@ -88,8 +88,8 @@ void rasterizeObject(Object3D object, SDL_Renderer* renderer) {
         int vertexesOffscreen = 0;
         for (int vertex = 0; vertex < 3; vertex++) {
             if (object.faces[face].vertexesProjected[vertex].x < 0 || object.faces[face].vertexesProjected[vertex].x > 1280 || object.faces[face].vertexesProjected[vertex].y < 0 || object.faces[face].vertexesProjected[vertex].y > 720) {
-                object.faces[face].vertexes[vertex].x = std::clamp(object.faces[face].vertexesProjected[vertex].x, 0, 1280);
-                object.faces[face].vertexes[vertex].y = std::clamp(object.faces[face].vertexesProjected[vertex].y, 0, 720);
+                object.faces[face].vertexesProjected[vertex].x = std::clamp(object.faces[face].vertexesProjected[vertex].x, 0, 1280);
+                object.faces[face].vertexesProjected[vertex].y = std::clamp(object.faces[face].vertexesProjected[vertex].y, 0, 720);
                 vertexesOffscreen++;
             }
         }

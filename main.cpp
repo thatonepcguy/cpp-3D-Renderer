@@ -232,9 +232,9 @@ int main() {
             cameraPos.x += 0.1*cos(cameraRot.y);
             cameraPos.z += 0.1*sin(cameraRot.y);
         } else if (keyPressed == "sp") {
-            cameraPos.y += 1;
+            cameraPos.y += 0.1;
         } else if (keyPressed == "sh") {
-            cameraPos.y -= 1;
+            cameraPos.y -= 0.1;
         } else if (keyPressed == "kr") {
             cameraRot.y -= 0.05236;
         } else if (keyPressed == "kl") {
