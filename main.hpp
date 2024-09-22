@@ -16,6 +16,7 @@ typedef struct {
 typedef struct {
     Vector3 vertexes[3];
     SDL_Point vertexesProjected[3];
+    Vector3 centerPoint;
     Vector3 vectorNormals[3];
     Vector3 faceNormal;
     Uint8 color[3];

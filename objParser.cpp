@@ -61,7 +61,7 @@ Object3D parse(std::string path) {
             face.faceNormal.x = (face.vectorNormals[0].x+face.vectorNormals[1].x+face.vectorNormals[2].x) / 3;
             face.faceNormal.y = (face.vectorNormals[0].y+face.vectorNormals[1].y+face.vectorNormals[2].y) / 3;
             face.faceNormal.z = (face.vectorNormals[0].z+face.vectorNormals[1].z+face.vectorNormals[2].z) / 3;
-
+            
             face.color[0] = static_cast<Uint8>(std::round((face.faceNormal.x + 1) * 127.5));
             face.color[1] = static_cast<Uint8>(std::round((face.faceNormal.y + 1) * 127.5));
             face.color[2] = static_cast<Uint8>(std::round((face.faceNormal.z + 1) * 127.5));

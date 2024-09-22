@@ -8,6 +8,7 @@
 #include "objParser.hpp"
 #include "main.hpp"
 #include "objectRasterizer.hpp"
+#include "objCulling.hpp"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -46,28 +47,6 @@ Object3D zOrder(const Object3D& object) {
     return objectOrdered;
 }
 
-Object3D behindCulling(Object3D object) {
-    Object3D objectCulled = object;
-    for (int face = 0; face < objectCulled.faces.size(); face++) {
-        int vertexesBehind = 0;
-        for (int vertex = 0; vertex < 3; vertex++) {
-            if (objectCulled.faces[face].vertexes[vertex].z > 0) {
-                vertexesBehind++;
-            }
-        }
-        if (vertexesBehind == 3) {
-            objectCulled.faces.erase(objectCulled.faces.begin() + face);
-            face--;
-        } else if (vertexesBehind > 0 && vertexesBehind < 3) {
-            for (int vertex = 0; vertex < 3; vertex++) {
-                if (objectCulled.faces[face].vertexes[vertex].z > 0) {
-                    objectCulled.faces[face].vertexes[vertex].z = 0;
-                }
-            }
-        }
-    }
-    return objectCulled;
-}
 
 void render(Object3D object, SDL_Renderer *renderer) {
     rasterizeObject(object, renderer);
