@@ -18,10 +18,9 @@ std::vector<Vector2Int> plotLine(int x0, int y0, int x1, int y1, SDL_Renderer *r
     int sy = y0 < y1 ? 1 : -1;
     int error = dx+dy;
     while (true) {
-        SDL_RenderDrawPoint(renderer, x0, y0);
-        points.push_back({x0, y0});
+        points.push_back({x0, y0});  
         if (x0 == x1 && y0 == y1) {break;}
-        if (x0 > 1280 || x0 < 0 || y0 > 720 || y0 < 0) {break;}
+        if (x0 > 640 || x0 < 0 || y0 > 360 || y0 < 0) {break;}
         int e2 = 2 * error;
         if (e2 >= dy) {
             error = error + dy;
@@ -41,7 +40,7 @@ void fillTriangle(std::vector<Vector2Int> side1, std::vector<Vector2Int> side2, 
     sides.insert(sides.end(), side2.begin(), side2.end());
     sides.insert(sides.end(), side3.begin(), side3.end());
 
-    int minY = 720;
+    int minY = 360;
     int maxY = 0;
     for (int point = 0; point < sides.size(); point++) {
         if (sides[point].y > maxY) {
@@ -61,7 +60,7 @@ void fillTriangle(std::vector<Vector2Int> side1, std::vector<Vector2Int> side2, 
                 points.push_back(sides[point]);
             }
         }
-        int minX = 1280;
+        int minX = 640;
         int maxX = 0;
         for (int point = 0; point < points.size(); point++) {
             if (points[point].x > maxX) {
@@ -87,9 +86,9 @@ void rasterizeObject(Object3D object, SDL_Renderer* renderer) {
     for (int face = 0; face < object.faces.size(); face++) {
         int vertexesOffscreen = 0;
         for (int vertex = 0; vertex < 3; vertex++) {
-            if (object.faces[face].vertexesProjected[vertex].x < 0 || object.faces[face].vertexesProjected[vertex].x > 1280 || object.faces[face].vertexesProjected[vertex].y < 0 || object.faces[face].vertexesProjected[vertex].y > 720) {
-                object.faces[face].vertexesProjected[vertex].x = std::clamp(object.faces[face].vertexesProjected[vertex].x, 0, 1280);
-                object.faces[face].vertexesProjected[vertex].y = std::clamp(object.faces[face].vertexesProjected[vertex].y, 0, 720);
+            if (object.faces[face].vertexesProjected[vertex].x < 0 || object.faces[face].vertexesProjected[vertex].x > 640 || object.faces[face].vertexesProjected[vertex].y < 0 || object.faces[face].vertexesProjected[vertex].y > 360) {
+                object.faces[face].vertexesProjected[vertex].x = std::clamp(object.faces[face].vertexesProjected[vertex].x, 0, 640);
+                object.faces[face].vertexesProjected[vertex].y = std::clamp(object.faces[face].vertexesProjected[vertex].y, 0, 360);
                 vertexesOffscreen++;
             }
         }

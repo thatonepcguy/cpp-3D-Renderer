@@ -58,8 +58,8 @@ Object3D project(Object3D object, int fov) {
 
     for (int face = 0; face < object.faces.size(); face++) {
         for (int vertex = 0; vertex < 3; vertex++) {
-            objectProjected.faces[face].vertexesProjected[vertex].x = (objectProjected.faces[face].vertexes[vertex].x * Fov/ objectProjected.faces[face].vertexes[vertex].z)+ WIDTH / 2;
-            objectProjected.faces[face].vertexesProjected[vertex].y = (objectProjected.faces[face].vertexes[vertex].y * Fov / objectProjected.faces[face].vertexes[vertex].z) + HEIGHT / 2;
+            objectProjected.faces[face].vertexesProjected[vertex].x = (objectProjected.faces[face].vertexes[vertex].x * Fov/ objectProjected.faces[face].vertexes[vertex].z)+ 640 / 2;
+            objectProjected.faces[face].vertexesProjected[vertex].y = (objectProjected.faces[face].vertexes[vertex].y * Fov / objectProjected.faces[face].vertexes[vertex].z) + 360 / 2;
 
         }
     }
@@ -119,10 +119,12 @@ int main() {
 
     window = SDL_CreateWindow("3D-Renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_SWSURFACE);
     renderer = SDL_CreateRenderer(window, -1, SDL_FLAGS);
+    SDL_Texture* renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 360);
 
     // Create Object
-    std::string path = "Suzanne.obj";
-    Object3D object = parse(path);
+    std::string path = "Flamethrower Turret/object.obj";
+    std::string mtlPath = "Flamethrower Turret/object.mtl";
+    Object3D object = parse(path, mtlPath);
 
     // Camera
     Vector3 cameraPos = {0, 0, 10};
@@ -232,9 +234,15 @@ int main() {
         object3D = zOrder(object3D);
         object3D = project(object3D, FOV);
 
+        SDL_SetRenderTarget(renderer, renderTexture);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         render(object3D, renderer);
+
+        SDL_SetRenderTarget(renderer, NULL); 
+        SDL_Rect dstRect = { 0, 0, 1280, 720 };
+        SDL_RenderCopy(renderer, renderTexture, NULL, &dstRect);
+
         SDL_RenderPresent(renderer);
 
         // sleep ~60fps

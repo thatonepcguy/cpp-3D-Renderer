@@ -2,4 +2,4 @@
 #include <string>
 #include "main.hpp"
 
-Object3D parse(std::string path);
+Object3D parse(std::string path, std::string mtlPath);
