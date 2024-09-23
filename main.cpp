@@ -9,6 +9,7 @@
 #include "main.hpp"
 #include "objectRasterizer.hpp"
 #include "objCulling.hpp"
+#include "lighting.hpp"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -122,13 +123,14 @@ int main() {
     SDL_Texture* renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 360);
 
     // Create Object
-    std::string path = "Flamethrower Turret/object.obj";
-    std::string mtlPath = "Flamethrower Turret/object.mtl";
+    std::string path = "man/object.obj";
+    std::string mtlPath = "man/object.mtl";
     Object3D object = parse(path, mtlPath);
 
     // Camera
     Vector3 cameraPos = {0, 0, 10};
     Vector3 cameraRot = {0, 0, 0};
+    Vector3 lightRot = {0,0,0};
 
     // MAIN LOOP
     bool QUIT = false;
@@ -233,6 +235,9 @@ int main() {
         object3D = behindCulling(object3D);
         object3D = zOrder(object3D);
         object3D = project(object3D, FOV);
+        object3D = calculateLighting(object3D, lightRot);
+
+        lightRot.x += 0.05;
 
         SDL_SetRenderTarget(renderer, renderTexture);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
