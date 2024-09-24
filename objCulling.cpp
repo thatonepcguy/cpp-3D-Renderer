@@ -1,5 +1,7 @@
 #include "main.hpp"
 #include "objCulling.hpp"
+#include "shared.hpp"
+
 
 
 Object3D behindCulling(Object3D object) {

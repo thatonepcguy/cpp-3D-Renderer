@@ -1,0 +1,1 @@
+float fastInvSqrt(float x);

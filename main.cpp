@@ -123,8 +123,8 @@ int main() {
     SDL_Texture* renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 360);
 
     // Create Object
-    std::string path = "man/object.obj";
-    std::string mtlPath = "man/object.mtl";
+    std::string path = "Flamethrower Turret/object.obj";
+    std::string mtlPath = "Flamethrower Turret/object.mtl";
     Object3D object = parse(path, mtlPath);
 
     // Camera
@@ -176,6 +176,12 @@ int main() {
                             break;
                         case SDLK_DOWN:
                             keyPressed = "kd";
+                            break;
+                        case SDLK_q:
+                            lightRot.x += 0.1;
+                            break;
+                        case SDLK_e:
+                            lightRot.x -= 0.1;
                             break;
                     }
                     break;
@@ -236,8 +242,6 @@ int main() {
         object3D = zOrder(object3D);
         object3D = project(object3D, FOV);
         object3D = calculateLighting(object3D, lightRot);
-
-        lightRot.x += 0.05;
 
         SDL_SetRenderTarget(renderer, renderTexture);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
