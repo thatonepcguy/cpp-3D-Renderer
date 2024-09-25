@@ -9,8 +9,12 @@
 #include "objectRasterizer.hpp"
 #include "main.hpp"
 
-std::vector<Vector2Int> plotLine(int x0, int y0, int x1, int y1, SDL_Renderer *renderer) {
+std::vector<Vector2Int> plotLine(int x0, int y0, int x1, int y1, UV uv1, UV uv2, SDL_Renderer *renderer) {
     std::vector<Vector2Int> points;
+    std::vector<Vector2> uv;
+    float d = sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
+    UV change = {uv1.u - uv2.u, uv1.v-uv2.v};
+    int steps = 0;
     // Bresenham's line drawing algorithim 
     int dx = abs(x1-x0);
     int sx = x0 < x1 ? 1 : -1;
@@ -18,7 +22,9 @@ std::vector<Vector2Int> plotLine(int x0, int y0, int x1, int y1, SDL_Renderer *r
     int sy = y0 < y1 ? 1 : -1;
     int error = dx+dy;
     while (true) {
-        points.push_back({x0, y0});  
+        points.push_back({x0, y0});
+        uv.push_back({uv1.u+((change.u/d)*steps), uv1.v+((change.v/d)*steps)});
+        steps++;
         if (x0 == x1 && y0 == y1) {break;}
         if (x0 > 640 || x0 < 0 || y0 > 360 || y0 < 0) {break;}
         int e2 = 2 * error;
@@ -94,9 +100,9 @@ void rasterizeObject(Object3D object, SDL_Renderer* renderer) {
         }
         if (vertexesOffscreen < 3) {
             SDL_SetRenderDrawColor(renderer, object.faces[face].color[0], object.faces[face].color[1], object.faces[face].color[2], 255);
-            std::vector<Vector2Int> side1 = plotLine(static_cast<int>(std::round(object.faces[face].vertexesProjected[0].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[0].y)), static_cast<int>(std::round(object.faces[face].vertexesProjected[1].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[1].y)), renderer);
-            std::vector<Vector2Int> side2 = plotLine(static_cast<int>(std::round(object.faces[face].vertexesProjected[1].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[1].y)), static_cast<int>(std::round(object.faces[face].vertexesProjected[2].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[2].y)), renderer);
-            std::vector<Vector2Int> side3 = plotLine(static_cast<int>(std::round(object.faces[face].vertexesProjected[2].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[2].y)), static_cast<int>(std::round(object.faces[face].vertexesProjected[0].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[0].y)), renderer);
+            std::vector<Vector2Int> side1 = plotLine(static_cast<int>(std::round(object.faces[face].vertexesProjected[0].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[0].y)), static_cast<int>(std::round(object.faces[face].vertexesProjected[1].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[1].y)), object.faces[face].uv[0], object.faces[face].uv[1], renderer);
+            std::vector<Vector2Int> side2 = plotLine(static_cast<int>(std::round(object.faces[face].vertexesProjected[1].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[1].y)), static_cast<int>(std::round(object.faces[face].vertexesProjected[2].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[2].y)), object.faces[face].uv[1], object.faces[face].uv[2], renderer);
+            std::vector<Vector2Int> side3 = plotLine(static_cast<int>(std::round(object.faces[face].vertexesProjected[2].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[2].y)), static_cast<int>(std::round(object.faces[face].vertexesProjected[0].x)), static_cast<int>(std::round(object.faces[face].vertexesProjected[0].y)), object.faces[face].uv[0], object.faces[face].uv[1], renderer);
             fillTriangle(side1, side2, side3, renderer);
         }
     }

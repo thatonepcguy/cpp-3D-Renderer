@@ -74,9 +74,9 @@ Object3D transform(Object3D object, Vector3 cameraPos) {
     for (int face = 0; face < object.faces.size(); face++) {
         for (int vertex = 0; vertex < 3; vertex++) {
             Vector3 v = {object.faces[face].vertexes[vertex].x, object.faces[face].vertexes[vertex].y, object.faces[face].vertexes[vertex].z};
-            v.x -= cameraPos.x;
-            v.y -= cameraPos.y;
-            v.z -= cameraPos.z;
+            v.x -= cameraPos.x + object.position.x;
+            v.y -= cameraPos.y + object.position.y;
+            v.z -= cameraPos.z + object.position.z;
             objectTransformed.faces[face].vertexes[vertex].x = v.x;
             objectTransformed.faces[face].vertexes[vertex].y = v.y;
             objectTransformed.faces[face].vertexes[vertex].z = v.z;
@@ -120,12 +120,14 @@ int main() {
 
     window = SDL_CreateWindow("3D-Renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_SWSURFACE);
     renderer = SDL_CreateRenderer(window, -1, SDL_FLAGS);
-    SDL_Texture* renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 360);
+    SDL_Texture* renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, 640, 360);
 
     // Create Object
     std::string path = "Flamethrower Turret/object.obj";
     std::string mtlPath = "Flamethrower Turret/object.mtl";
-    Object3D object = parse(path, mtlPath);
+    std::string texPath = "Temp Texture.png";
+    Object3D object = parse(path, mtlPath, texPath);
+    object.position = {0,0,0};
 
     // Camera
     Vector3 cameraPos = {0, 0, 10};
@@ -255,11 +257,12 @@ int main() {
         SDL_RenderPresent(renderer);
 
         // sleep ~60fps
-        usleep(16666);
+        SDL_Delay(16);
     }
 
     // QUIT
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyTexture(renderTexture);
     SDL_DestroyWindow(window);
     window = NULL;
     renderer = NULL;

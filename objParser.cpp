@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <SDL2/SDL_image.h>
 #include "objParser.hpp"
 #include "main.hpp"
 
@@ -30,7 +31,32 @@ std::vector<std::string> tokenize(const std::string& s, const std::string& del =
 }
 
 
-Object3D parse(std::string path, std::string mtlPath) {
+Object3D parse(std::string path, std::string mtlPath, std::string texPath) {
+    Object3D object;
+
+    // load the texture
+    IMG_Init(IMG_INIT_PNG);
+    const char* texPathChar = texPath.c_str();
+    SDL_Surface* image = IMG_Load(texPathChar);
+    Uint32* pixels = (Uint32*)image->pixels;
+    object.texWidth = image->w;
+    object.texHeight = image->h;
+    int pitch = image->pitch/4;
+
+    std::vector<Uint32> texture;
+
+    for (int y = 0; y < object.texHeight; ++y) {
+        for (int x = 0; x < object.texWidth; ++x) {
+            Uint32 pixel = pixels[y * pitch + x];
+            Uint8 r, g, b, a;
+            SDL_GetRGBA(pixel, image->format, &r, &g, &b, &a);
+            Uint32 color = (r<<24)|(g<<16)|(b<<8)|a;
+            object.texture.push_back(color);
+        }
+    }
+    IMG_Quit();
+
+
     std::string MTLline;
     std::ifstream MTLFILE(mtlPath, std::ios::in);
 
@@ -54,6 +80,7 @@ Object3D parse(std::string path, std::string mtlPath) {
 
     std::vector<std::vector<float>> vertexes; 
     std::vector<std::vector<float>> normals; 
+    std::vector<std::vector<float>> uv; 
     std::vector<Face3D> faces;
 
     Uint8 currentColor[3];
@@ -61,7 +88,6 @@ Object3D parse(std::string path, std::string mtlPath) {
 
     std::ifstream FILE(path, std::ios::in);
 
-    Object3D object;
     while (std::getline(FILE, VERTline)) {
         if (VERTline.rfind("v ", 0) == 0) {
             std::vector<std::string> parts = tokenize(VERTline, " ");
@@ -70,6 +96,10 @@ Object3D parse(std::string path, std::string mtlPath) {
         if (VERTline.rfind("vn ", 0) == 0) {
             std::vector<std::string> parts = tokenize(VERTline, " ");
             normals.push_back({std::stof(parts[1]),std::stof(parts[2]), std::stof(parts[3])});
+        }
+        if (VERTline.rfind("vt ", 0) == 0) {
+            std::vector<std::string> parts = tokenize(VERTline, " ");
+            uv.push_back({std::stof(parts[1]),std::stof(parts[2])});
         }
     }
     FILE.close();
@@ -96,6 +126,9 @@ Object3D parse(std::string path, std::string mtlPath) {
             std::string v1 = v1Parts[0];
             std::string v2 = v2Parts[0];
             std::string v3 = v3Parts[0];
+            std::string uv1 = v1Parts[1];
+            std::string uv2 = v2Parts[1];
+            std::string uv3 = v3Parts[1];
             std::string n1 = v1Parts[2];
             std::string n2 = v2Parts[2];
             std::string n3 = v3Parts[2];
@@ -107,6 +140,11 @@ Object3D parse(std::string path, std::string mtlPath) {
             face.vectorNormals[0] = {normals[std::stoi(n1)-1][0], normals[std::stoi(n1)-1][1], normals[std::stoi(n1)-1][2]};
             face.vectorNormals[1] = {normals[std::stoi(n2)-1][0], normals[std::stoi(n2)-1][1], normals[std::stoi(n2)-1][2]};
             face.vectorNormals[2] = {normals[std::stoi(n3)-1][0], normals[std::stoi(n3)-1][1], normals[std::stoi(n3)-1][2]};
+
+            face.uv[0] = {uv[std::stoi(uv1)-1][0],uv[std::stoi(uv1)-1][1]};
+            face.uv[1] = {uv[std::stoi(uv2)-1][0],uv[std::stoi(uv2)-1][1]};
+            face.uv[2] = {uv[std::stoi(uv3)-1][0],uv[std::stoi(uv3)-1][1]};
+            std::cout << face.uv[0].u << ", " << face.uv[0].v << "\n";
 
             face.faceNormal.x = (face.vectorNormals[0].x+face.vectorNormals[1].x+face.vectorNormals[2].x) / 3;
             face.faceNormal.y = (face.vectorNormals[0].y+face.vectorNormals[1].y+face.vectorNormals[2].y) / 3;
